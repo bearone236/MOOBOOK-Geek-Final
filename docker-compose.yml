@@ -1,0 +1,17 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ./go-app
+    ports:
+      - '8080:8080'
+    restart: always
+
+  client:
+    build:
+      context: ./react-vite-app
+    ports:
+      - '3000:3000'
+    restart: always
