@@ -27,11 +27,12 @@ var imageDB []ImageInfo // 画像情報を格納するスライス
 func main() {
 	router := gin.Default()
 
+	// CORSが起きないようにエラー回避処理
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:3000"}
 	router.Use(cors.New(config))
 
-	imageDB = make([]ImageInfo, 0) // スライスを初期化
+	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
 
 	router.POST("/upload", func(c *gin.Context) {
 		imageDB = make([]ImageInfo, 0)
