@@ -14,6 +14,8 @@ function App() {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadButtonDisabled, setUploadButtonDisabled] = useState(false); // upload ボタンの無効/有効を制御
 
   useEffect(() => {
     console.log(images);
@@ -21,7 +23,15 @@ function App() {
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setSelectedFile(event.target.files[0]);
+      const file = event.target.files[0];
+      if (file.type !== 'application/pdf') {
+        setUploadError('エラー：pdfファイル以外のファイルがアップロードされています。');
+        setUploadButtonDisabled(true); // エラー時にボタンを無効にする
+      } else {
+        setUploadError(null);
+        setSelectedFile(file);
+        setUploadButtonDisabled(false); // エラーが解消されたらボタンを有効にする
+      }
     }
   };
 
@@ -31,12 +41,9 @@ function App() {
       const formData = new FormData();
       formData.append('file', selectedFile);
       axios.post<ImageInfo[]>('http://localhost:8080/upload', formData).then((res) => {
-        // アップロード毎に画像情報をリセット
         setImages([]);
-
         const sortedImages = res.data.sort((a, b) => a.id - b.id);
         setImages(sortedImages);
-        // setImages(res.data);
         setLoading(false);
       });
     }
@@ -55,7 +62,11 @@ function App() {
   return (
     <div>
       <input type="file" onChange={onFileChange} />
-      <button onClick={onFileUpload}>Upload!</button>
+      <button onClick={onFileUpload} disabled={uploadButtonDisabled}>
+        アップロード
+      </button>
+      {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
+
       {loading ? (
         <div className="loading">
           <div className="loader"></div>
