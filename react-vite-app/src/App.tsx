@@ -11,11 +11,10 @@ interface ImageInfo {
 }
 
 function App() {
-  const [selectedFile, setSelectedFile] = useState<File>();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadButtonDisabled, setUploadButtonDisabled] = useState(false); // upload ボタンの無効/有効を制御
 
   useEffect(() => {
     console.log(images);
@@ -26,11 +25,10 @@ function App() {
       const file = event.target.files[0];
       if (file.type !== 'application/pdf') {
         setUploadError('エラー：pdfファイル以外のファイルがアップロードされています。');
-        setUploadButtonDisabled(true); // エラー時にボタンを無効にする
+        setSelectedFile(null); // エラー時にファイルをクリア
       } else {
         setUploadError(null);
         setSelectedFile(file);
-        setUploadButtonDisabled(false); // エラーが解消されたらボタンを有効にする
       }
     }
   };
@@ -62,11 +60,11 @@ function App() {
   return (
     <div>
       <input type="file" onChange={onFileChange} />
-      <button onClick={onFileUpload} disabled={uploadButtonDisabled}>
+      <button onClick={onFileUpload} disabled={selectedFile === null || uploadError !== null}>
         アップロード
       </button>
+      {!selectedFile && !uploadError && <p style={{ color: 'orange' }}>ファイルが選択されていません。PDFファイルを選択してください。</p>}
       {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
-
       {loading ? (
         <div className="loading">
           <div className="loader"></div>
