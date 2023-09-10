@@ -24,3 +24,15 @@ export const uploadErrorState = atom<string | null>({
   key: 'uploadError',
   default: null,
 });
+
+// アップロードボタンが押されたかの状態を管理するAtom
+export const isButtonPressedState = atom({
+  key: 'isButtonPressedState',
+  default: false, // ボタンが初期状態では押されていない状態とします
+});
+
+// カメラで読み取った状態を管理するAtom
+export const poseState = atom<string>({
+  key: 'poseState', // ユニークなキーを指定
+  default: '',
+});

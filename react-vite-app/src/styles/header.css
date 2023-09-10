@@ -1,0 +1,10 @@
+.headerImage {
+  width: 10%;
+}
+
+.camera {
+  position: absolute;
+  right: 0;
+  bottom: -0.3%;
+  z-index: 10000;
+}
