@@ -102,16 +102,16 @@ const Camera: React.FC = () => {
               if (x_dist < -1 * threshold) {
                 // console.log('手が左に移動しました');
                 prevX = null;
-                setPose(''); // リセット
+                setPose('');
               } else if (x_dist > threshold) {
                 // console.log('手が右に移動しました');
                 prevX = null;
-                setPose(''); // リセット
+                setPose('');
               } else {
                 // console.log('手は左右には動いていません');
                 prevX = null;
                 prevY = null;
-                setPose(''); // リセット
+                setPose('');
               }
 
               if (y_dist < -1 * distThreshold) {
