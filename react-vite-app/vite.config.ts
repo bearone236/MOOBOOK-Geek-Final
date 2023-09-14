@@ -8,4 +8,9 @@ export default defineConfig({
     host: true,
     port: 3000,
   },
+  build: {
+    rollupOptions: {
+      external: ['prop-types'],
+    },
+  },
 });

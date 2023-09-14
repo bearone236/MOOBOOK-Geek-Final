@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
-import { useRecoilState } from 'recoil'; // Recoil 関連のインポート
-import { poseState } from '../recoil/Atom'; // 手のポーズの状態をインポート
+import { useRecoilState } from 'recoil';
+import { poseState } from '../recoil/Atom';
 
 const Camera: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [, setPose] = useRecoilState(poseState); // Recoil の状態を使用
+  const [, setPose] = useRecoilState(poseState);
 
   useEffect(() => {
     let prevX: number | null = null;

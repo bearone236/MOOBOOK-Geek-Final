@@ -13,26 +13,26 @@ export const imagesState = atom<ImageInfo[]>({
   default: [],
 });
 
-// ローディング状態を管理するAtom
-export const loadingState = atom<boolean>({
-  key: 'loading',
-  default: false,
-});
-
 // アップロードエラーを管理するAtom
 export const uploadErrorState = atom<string | null>({
   key: 'uploadError',
   default: null,
 });
 
-// アップロードボタンが押されたかの状態を管理するAtom
+// ローディング状態を管理するAtom (Bool値)
+export const loadingState = atom<boolean>({
+  key: 'loading',
+  default: false,
+});
+
+// アップロードボタンが押されたかの状態を管理するAtom (Bool値)
 export const isButtonPressedState = atom({
   key: 'isButtonPressedState',
-  default: false, // ボタンが初期状態では押されていない状態とします
+  default: false,
 });
 
 // カメラで読み取った状態を管理するAtom
 export const poseState = atom<string>({
-  key: 'poseState', // ユニークなキーを指定
+  key: 'poseState',
   default: '',
 });
