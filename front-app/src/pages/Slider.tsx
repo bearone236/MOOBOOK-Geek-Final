@@ -35,12 +35,10 @@ const ImageSlider: React.FC<SliderProps> = ({ images }) => {
 
   useEffect(() => {
     if (pose === 'toright') {
-      // console.log('前のページへ');
       if (sliderRef.current) {
         sliderRef.current.slickNext();
       }
     } else if (pose === 'toleft') {
-      // console.log('次のページへ');
       if (sliderRef.current) {
         sliderRef.current.slickPrev();
       }
