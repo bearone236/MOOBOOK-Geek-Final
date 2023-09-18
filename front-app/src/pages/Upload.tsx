@@ -14,8 +14,10 @@ export const Upload = () => {
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
-      if (file.type !== 'application/pdf') {
-        setUploadError('エラー：pdfファイル以外のファイルがアップロードされています。');
+      const allowedFileTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation']; // PDFとPPTXを許可
+
+      if (!allowedFileTypes.includes(file.type)) {
+        setUploadError('エラー：サポートされていないファイル形式です。PDFファイルまたはPPTXファイルを選択してください。');
         setSelectedFile(null);
       } else {
         setUploadError(null);
@@ -55,7 +57,7 @@ export const Upload = () => {
         アップロード
       </button>
 
-      {!selectedFile && !uploadError && <p style={{ color: 'orange' }}>ファイルが選択されていません。PDFファイルを選択してください。</p>}
+      {!selectedFile && !uploadError && <p style={{ color: 'orange' }}>ファイルが選択されていません。PDFファイルまたはPPTXファイルを選択してください。</p>}
       {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
     </div>
   );
