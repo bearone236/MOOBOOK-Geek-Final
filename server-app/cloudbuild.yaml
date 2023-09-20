@@ -4,6 +4,6 @@ steps:
 images:
   - 'gcr.io/$PROJECT_ID/moobook-geek-final-server-2'
 options:
-  logging: CLOUD_LOGGING_ONLY
+  # logging: CLOUD_LOGGING_ONLY
   # serviceAccount: 1072813062141@cloudbuild.gserviceaccount.com
 logsBucket: 'artifacts.moobook-2023.appspot.com'
