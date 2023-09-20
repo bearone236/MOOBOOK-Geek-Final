@@ -29,7 +29,7 @@ var imageDB []ImageInfo // 画像情報を格納するスライス
 func main() {
 	router := gin.Default()
 
-	// CORSが起きないようにエラー回避処理
+	// CORSが起きないようにエラー処理
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:3000"}
 	router.Use(cors.New(config))
@@ -57,7 +57,7 @@ func main() {
 			}
 			file.Filename = strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pdf"
 
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 		}
 
 		doc, _ := fitz.New(file.Filename)
@@ -74,7 +74,6 @@ func main() {
 				jpeg.Encode(buf, img, nil)
 				str := base64.StdEncoding.EncodeToString(buf.Bytes())
 
-				// 画像情報を追加
 				imageDB = append(imageDB, ImageInfo{
 					ID:   page + 1, // ページ番号をIDとして使用
 					Data: str,

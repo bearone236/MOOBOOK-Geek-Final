@@ -23,7 +23,7 @@ export const Upload = () => {
       const allowedFileTypes = [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      ]; // PDFとPPTXを許可
+      ];
 
       if (!allowedFileTypes.includes(file.type)) {
         setUploadError(
@@ -53,7 +53,6 @@ export const Upload = () => {
           setLoading(false);
         })
         .catch((error) => {
-          // エラーハンドリング
           console.error("APIエラー:", error);
           setUploadError("APIリクエスト中にエラーが発生しました。");
           setLoading(false);
@@ -63,33 +62,20 @@ export const Upload = () => {
 
   return (
     <div className="upload">
-      <div id="outerArea">
-        <div id="innerArea">
-          <div>
-            <div id="icons">
-              <img src="./PDFIcon.png" alt="PDFIcon" />
-              <img src="./PowrPointIcon.png" alt="PowrPointIcon" />
-            </div>
-            <label id="selectButton">
-              <input type="file" onChange={onFileChange} />
-              ファイルを選択してください
-            </label>
-            <button
-              onClick={onFileUpload}
-              disabled={selectedFile === null || uploadError !== null}
-            >
-              アップロード
-            </button>
+      <input type="file" onChange={onFileChange} />
+      <button
+        onClick={onFileUpload}
+        disabled={selectedFile === null || uploadError !== null}
+      >
+        アップロード
+      </button>
 
-            {!selectedFile && !uploadError && (
-              <p style={{ color: "orange" }}>
-                ファイルが選択されていません。PDFファイルまたはPPTXファイルを選択してください。
-              </p>
-            )}
-            {uploadError && <p style={{ color: "red" }}>{uploadError}</p>}
-          </div>
-        </div>
-      </div>
+      {!selectedFile && !uploadError && (
+        <p style={{ color: "orange" }}>
+          ファイルが選択されていません。PDFファイルまたはPPTXファイルを選択してください。
+        </p>
+      )}
+      {uploadError && <p style={{ color: "red" }}>{uploadError}</p>}
     </div>
   );
 };
