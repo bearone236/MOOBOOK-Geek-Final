@@ -7,3 +7,5 @@ const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
 export const fetchImages = (formData: FormData) => {
   return axios.post<ImageInfo[]>(`${apiEndpoint}/upload`, formData);
 };
+
+console.log(apiEndpoint);
