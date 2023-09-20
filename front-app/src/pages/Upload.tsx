@@ -14,7 +14,7 @@ export const Upload = () => {
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
-      const allowedFileTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation']; // PDFとPPTXを許可
+      const allowedFileTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
 
       if (!allowedFileTypes.includes(file.type)) {
         setUploadError('エラー：サポートされていないファイル形式です。PDFファイルまたはPPTXファイルを選択してください。');
@@ -42,7 +42,6 @@ export const Upload = () => {
           setLoading(false);
         })
         .catch((error) => {
-          // エラーハンドリング
           console.error('APIエラー:', error);
           setUploadError('APIリクエスト中にエラーが発生しました。');
           setLoading(false);
