@@ -1,6 +1,6 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/moobook-geek-final-server-2', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/moobook-geek-final-server-2', './server-app']
 images:
   - 'gcr.io/$PROJECT_ID/moobook-geek-final-server-2'
 options:
