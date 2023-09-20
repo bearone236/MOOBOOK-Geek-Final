@@ -5,3 +5,4 @@ images:
   - 'gcr.io/$PROJECT_ID/moobook-geek-final-server'
 options:
   logging: CLOUD_LOGGING_ONLY
+logsBucket: 'moobook-2023_cloudbuild'
