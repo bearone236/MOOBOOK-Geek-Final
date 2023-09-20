@@ -31,7 +31,6 @@ func main() {
 
 	// CORSが起きないようにエラー処理
 	config := cors.DefaultConfig()
-	// config.AllowOrigins = []string{"http://localhost:3000"}
 	config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app/"}
 	router.Use(cors.New(config))
 
@@ -47,7 +46,6 @@ func main() {
 		defer src.Close()
 		io.Copy(f, src)
 
-		// ファイル拡張子をチェック、pptxの場合はPDFに変換
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
 			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
 			err := cmd.Run()
@@ -76,7 +74,7 @@ func main() {
 				str := base64.StdEncoding.EncodeToString(buf.Bytes())
 
 				imageDB = append(imageDB, ImageInfo{
-					ID:   page + 1, // ページ番号をIDとして使用
+					ID:   page + 1,
 					Data: str,
 				})
 			}(n)
@@ -84,18 +82,21 @@ func main() {
 
 		wg.Wait()
 
-		// クライアントに画像情報を返す
 		c.JSON(http.StatusOK, imageDB)
 
-		// 元のファイルと変換後のPDFファイル（存在する場合）を削除
 		os.Remove(file.Filename)
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
 			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
 		}
 	})
 
-	fmt.Println("Server started on port 8080")
-	if err := http.ListenAndServe(":8080", router); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // デフォルトのポート番号
+	}
+
+	fmt.Println("Server started on port", port)
+	if err := http.ListenAndServe(":"+port, router); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
