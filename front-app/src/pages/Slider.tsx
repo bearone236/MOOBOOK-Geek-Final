@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import { NextArrow } from '../components/NextArrow';
-import { PrevArrow } from '../components/PrevArrow';
-import { poseState } from '../recoil/Atom';
+import React, { useEffect, useRef } from "react";
+import { useRecoilValue } from "recoil";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { NextArrow } from "../components/NextArrow";
+import { PrevArrow } from "../components/PrevArrow";
+import { poseState } from "../recoil/Atom";
 
 export interface ImageInfo {
   id: number;
@@ -34,11 +34,11 @@ const ImageSlider: React.FC<SliderProps> = ({ images }) => {
   };
 
   useEffect(() => {
-    if (pose === 'toright') {
+    if (pose === "toright") {
       if (sliderRef.current) {
         sliderRef.current.slickNext();
       }
-    } else if (pose === 'toleft') {
+    } else if (pose === "toleft") {
       if (sliderRef.current) {
         sliderRef.current.slickPrev();
       }
@@ -48,9 +48,26 @@ const ImageSlider: React.FC<SliderProps> = ({ images }) => {
   return (
     <Slider {...settings} ref={sliderRef}>
       {images.map((image) => (
-        <div key={image.id}>
-          <img src={`data:image/png;base64,${image.data}`} alt="" style={{ width: '90%', height: '100%', margin: '0 auto' }} />
-          <p style={{ textAlign: 'center', fontSize: '15px', fontWeight: '600', paddingTop: '10px' }}>{image.id}</p>
+        <div key={image.id} style={{ zIndex: "1", position: "relative" }}>
+          <img
+            src={`data:image/png;base64,${image.data}`}
+            alt=""
+            style={{
+              width: "90%",
+              height: "100%",
+              margin: "0 auto",
+            }}
+          />
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: "15px",
+              fontWeight: "600",
+              paddingTop: "10px",
+            }}
+          >
+            {image.id}
+          </p>
         </div>
       ))}
     </Slider>
