@@ -31,7 +31,8 @@ func main() {
 
 	// CORSが起きないようにエラー処理
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
+	// config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app/"}
 	router.Use(cors.New(config))
 
 	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
