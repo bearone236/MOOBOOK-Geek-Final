@@ -91,9 +91,9 @@ func main() {
 	})
 
 	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080" // デフォルトのポート番号
-	}
+	// if port == "" {
+	// 	port = "8080"
+	// }
 
 	fmt.Println("Server started on port", port)
 	if err := http.ListenAndServe(":"+port, router); err != nil {
