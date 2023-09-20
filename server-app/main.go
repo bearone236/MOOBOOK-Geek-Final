@@ -1,5 +1,3 @@
-// main.go
-
 package main
 
 import (
@@ -10,7 +8,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/gen2brain/go-fitz"
 	"github.com/gin-contrib/cors"
@@ -44,6 +46,20 @@ func main() {
 		defer src.Close()
 		io.Copy(f, src)
 
+		// ファイル拡張子をチェック、pptxの場合はPDFに変換
+		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
+			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println("Error converting pptx to pdf:", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+				return
+			}
+			file.Filename = strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pdf"
+
+			time.Sleep(2 * time.Second)
+		}
+
 		doc, _ := fitz.New(file.Filename)
 		defer doc.Close()
 
@@ -71,7 +87,11 @@ func main() {
 		// クライアントに画像情報を返す
 		c.JSON(http.StatusOK, imageDB)
 
+		// 元のファイルと変換後のPDFファイル（存在する場合）を削除
 		os.Remove(file.Filename)
+		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
+			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
+		}
 	})
 
 	fmt.Println("Server started on port 8080")

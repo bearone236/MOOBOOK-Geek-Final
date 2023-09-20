@@ -1,8 +1,14 @@
-import React from 'react';
-import { useRecoilState } from 'recoil';
-import { selectedFileState, imagesState, uploadErrorState, loadingState, isButtonPressedState } from '../recoil/Atom';
-import { fetchImages } from '../api/api';
-import '../styles/upload.css';
+import React from "react";
+import { useRecoilState } from "recoil";
+import {
+  selectedFileState,
+  imagesState,
+  uploadErrorState,
+  loadingState,
+  isButtonPressedState,
+} from "../recoil/Atom";
+import { fetchImages } from "../api/api";
+import "../styles/upload.css";
 
 export const Upload = () => {
   const [selectedFile, setSelectedFile] = useRecoilState(selectedFileState);
@@ -14,8 +20,15 @@ export const Upload = () => {
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
-      if (file.type !== 'application/pdf') {
-        setUploadError('エラー：pdfファイル以外のファイルがアップロードされています。');
+      const allowedFileTypes = [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ]; // PDFとPPTXを許可
+
+      if (!allowedFileTypes.includes(file.type)) {
+        setUploadError(
+          "エラー：サポートされていないファイル形式です。PDFファイルまたはPPTXファイルを選択してください。"
+        );
         setSelectedFile(null);
       } else {
         setUploadError(null);
@@ -29,7 +42,7 @@ export const Upload = () => {
       setIsButtonPressed(true);
       setLoading(true);
       const formData = new FormData();
-      formData.append('file', selectedFile);
+      formData.append("file", selectedFile);
 
       // api.tsからAPI関数(fetchImages)を呼び出して画像データを取得
       fetchImages(formData)
@@ -41,8 +54,8 @@ export const Upload = () => {
         })
         .catch((error) => {
           // エラーハンドリング
-          console.error('APIエラー:', error);
-          setUploadError('APIリクエスト中にエラーが発生しました。');
+          console.error("APIエラー:", error);
+          setUploadError("APIリクエスト中にエラーが発生しました。");
           setLoading(false);
         });
     }
@@ -50,13 +63,33 @@ export const Upload = () => {
 
   return (
     <div className="upload">
-      <input type="file" onChange={onFileChange} />
-      <button onClick={onFileUpload} disabled={selectedFile === null || uploadError !== null}>
-        アップロード
-      </button>
+      <div id="outerArea">
+        <div id="innerArea">
+          <div>
+            <div id="icons">
+              <img src="./PDFIcon.png" alt="PDFIcon" />
+              <img src="./PowrPointIcon.png" alt="PowrPointIcon" />
+            </div>
+            <label id="selectButton">
+              <input type="file" onChange={onFileChange} />
+              ファイルを選択してください
+            </label>
+            <button
+              onClick={onFileUpload}
+              disabled={selectedFile === null || uploadError !== null}
+            >
+              アップロード
+            </button>
 
-      {!selectedFile && !uploadError && <p style={{ color: 'orange' }}>ファイルが選択されていません。PDFファイルを選択してください。</p>}
-      {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
+            {!selectedFile && !uploadError && (
+              <p style={{ color: "orange" }}>
+                ファイルが選択されていません。PDFファイルまたはPPTXファイルを選択してください。
+              </p>
+            )}
+            {uploadError && <p style={{ color: "red" }}>{uploadError}</p>}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
