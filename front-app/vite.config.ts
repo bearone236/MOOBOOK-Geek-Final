@@ -8,6 +8,7 @@ export default ({ mode }) => {
 
   return defineConfig({
     plugins: [react()],
+    envDir: '../', // これを追加
     server: {
       host: true,
       port: 3000,
