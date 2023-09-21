@@ -31,7 +31,8 @@
 説明閉じるボタン（closeButton）
 ----------- */
 #closeButton {
-  margin-left: 0 auto;
+  display: block;
+  margin: 0 auto;
 }
 
 /*---------------- 
@@ -66,15 +67,15 @@
 操作説明（Gesture関数）
 --------------------*/
 #gesture {
-  display: flex;
+  /* display: flex; */
   justify-content: space-around;
   flex-wrap: wrap;
 }
 
 #gesture div {
   border: solid 2px;
-  border-radius: 10px;
-  width: 45%;
+  border-radius: 20px;
+  width: 50%;
   height: auto;
   margin: 2%;
   padding: 2%;
@@ -98,20 +99,19 @@
 -------------------- */
 #ges-1 {
   object-fit: cover;
-  width: 300px;
+  width: 100%;
   height: auto;
 }
 
 #ges-2 {
   object-fit: cover;
-  width: 100px;
+  width: 100%;
   height: auto;
-  padding: 10px 0 0 10px;
 }
 
 #ges-3 {
   object-fit: cover;
-  width: 60px;
+  width: 100%;
   height: auto;
 }
 
@@ -119,4 +119,7 @@
   object-fit: cover;
   width: 300px;
   height: auto;
+}
+#A{
+  display: flex;
 }

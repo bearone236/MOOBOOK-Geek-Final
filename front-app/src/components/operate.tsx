@@ -8,11 +8,11 @@ export const Gesture = () => {
     <div id="gesture">
       <div>
         <p>ページ進める</p>
-        <img id="ges-1" src="./asset0001.png" alt="" />
+        <img id="ges-1" src="./asset0005.png" alt="" />
       </div>
       <div>
         <p>ページ戻り</p>
-        <img id="ges-2" src="./asset0002.png" alt="" />
+        <img id="ges-2" src="./asset0006.png" alt="" />
       </div>
       {/* <div>
         <p>決定</p>
@@ -31,11 +31,14 @@ export const Modal = ({ content, closeModal }) => {
     <div id="overlay" onClick={closeModal}>
       <div id="content" onClick={(e) => e.stopPropagation()}>
         <h2>{content}</h2>
+        <section id="A">
         <Gesture />
+        <Camera />
+        </section>
         <button id="closeButton" className="purpleButton" onClick={closeModal}>
           close
         </button>
-        <Camera />
+        
       </div>
     </div>
   );

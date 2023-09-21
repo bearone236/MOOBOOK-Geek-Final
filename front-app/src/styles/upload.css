@@ -5,8 +5,8 @@
 
 /* ----------------
 こうすけ変更点
------------------- */
-#outerArea {
+/* ------------------ */
+/* #outerArea {
   display: flex;
   align-items: center;
   width: 80vw;
@@ -37,13 +37,13 @@
   width: 100px;
   height: auto;
   margin-right: 20px;
-}
+} */ */
 
 /* #fileInput {
   border: none;
   background-color: #bd75df;
 } */
-
+/* 
 #selectButton {
   padding: 20px 40px;
   color: #ffffff;
@@ -51,7 +51,7 @@
   cursor: pointer;
   border-radius: 10px;
   clear: both;
-}
+} */
 
 input[type="file"] {
   display: none;
