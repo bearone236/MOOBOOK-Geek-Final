@@ -12,6 +12,7 @@ export default ({ mode }) => {
     server: {
       host: true,
       port: 3000,
+      cors: true,
     },
     build: {
       rollupOptions: {
