@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image/jpeg"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -73,12 +74,15 @@ func main() {
 		doc, _ := fitz.New(file.Filename)
 		defer doc.Close()
 
+		sem := make(chan struct{}, 20) // 同時に処理できるゴルーチンの数を制限します
 		var wg sync.WaitGroup
 		wg.Add(doc.NumPage())
 
 		for n := 0; n < doc.NumPage(); n++ {
+			sem <- struct{}{}
 			go func(page int) {
 				defer wg.Done()
+				defer func() { <-sem }()
 				img, _ := doc.Image(page)
 				buf := new(bytes.Buffer)
 				jpeg.Encode(buf, img, nil)
@@ -104,7 +108,15 @@ func main() {
 	port := os.Getenv("PORT")
 
 	fmt.Println("Server started on port", port)
-	if err := http.ListenAndServe(":"+port, router); err != nil {
+
+	// リクエストのキューイングとタイムアウトの設定
+	l, _ := net.Listen("tcp", ":"+port)
+	srv := &http.Server{
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	if err := srv.Serve(l); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
