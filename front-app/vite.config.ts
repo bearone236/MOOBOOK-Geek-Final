@@ -14,7 +14,7 @@ export default ({ mode }) => {
       cors: true,
       proxy: {
         '/upload': {
-          target: 'https://moobook-server-tulouizjtq-an.a.run.app',
+          target: 'https://moobook-2023-tulouizjtq-an.a.run.app/',
           changeOrigin: true,
         },
       },
