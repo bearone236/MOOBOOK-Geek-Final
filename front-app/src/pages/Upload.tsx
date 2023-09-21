@@ -11,7 +11,7 @@ export const Upload = () => {
   const [, setLoading] = useRecoilState(loadingState);
   const [, setIsButtonPressed] = useRecoilState(isButtonPressedState);
 
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = (event) => {
     if (event.target.files) {
       const file = event.target.files[0];
       const allowedFileTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
@@ -36,12 +36,12 @@ export const Upload = () => {
       // api.tsからAPI関数(fetchImages)を呼び出して画像データを取得
       fetchImages(formData)
         .then((res) => {
-          setImages([]);
-          if (Array.isArray(res.data)) {
+          if (Array.isArray(res.data) && res.data.length > 0) {
+            setImages([]);
             const sortedImages = res.data.sort((a, b) => a.id - b.id);
             setImages(sortedImages);
           } else {
-            console.error('APIレスポンスが配列ではありません。', res);
+            console.error('APIレスポンスが空または不正です。', res);
             setUploadError('APIレスポンスが正しくありません。');
           }
           setLoading(false);
