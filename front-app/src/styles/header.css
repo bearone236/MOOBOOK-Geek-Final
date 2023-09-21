@@ -4,7 +4,7 @@
 
 .camera {
   position: absolute;
-  right: 0;
-  bottom: -0.3%;
+  right: 0.4%;
+  bottom: 0%;
   z-index: 10000;
 }
