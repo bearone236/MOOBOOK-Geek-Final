@@ -43,6 +43,13 @@ func main() {
 
 	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
 
+	router.OPTIONS("/upload", func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://moobook-geek-final.vercel.app")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		c.JSON(http.StatusOK, struct{}{})
+	})
+
 	router.POST("/upload", func(c *gin.Context) {
 		imageDB = make([]ImageInfo, 0)
 
@@ -98,9 +105,6 @@ func main() {
 	})
 
 	port := os.Getenv("PORT")
-	// if port == "" {
-	// 	port = "8080"
-	// }
 
 	fmt.Println("Server started on port", port)
 	if err := http.ListenAndServe(":"+port, router); err != nil {
