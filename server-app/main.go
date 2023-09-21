@@ -34,8 +34,7 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app"}
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
-	config.AllowHeaders = []string{
-		"Access-Control-Allow-Headers",
+	config.AllowHeaders = []string{"Access-Control-Allow-Headers",
 		"Content-Type",
 	}
 	router.Use(cors.New(config))
@@ -54,7 +53,6 @@ func main() {
 		var wg sync.WaitGroup
 
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 
 			imageDB = make([]ImageInfo, 0)
