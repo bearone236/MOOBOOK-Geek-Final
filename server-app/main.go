@@ -49,60 +49,66 @@ func main() {
 	})
 
 	router.POST("/upload", func(c *gin.Context) {
-		imageDB = make([]ImageInfo, 0)
-
-		file, _ := c.FormFile("file")
-		f, _ := os.Create(file.Filename)
-		defer f.Close()
-		src, _ := file.Open()
-		defer src.Close()
-		io.Copy(f, src)
-
-		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
-			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
-			err := cmd.Run()
-			if err != nil {
-				fmt.Println("Error converting pptx to pdf:", err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
-				return
-			}
-			file.Filename = strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pdf"
-
-			time.Sleep(1 * time.Second)
-		}
-
-		doc, _ := fitz.New(file.Filename)
-		defer doc.Close()
-
 		sem := make(chan struct{}, 20) // 同時に処理できるゴルーチンの数を制限します
 		var wg sync.WaitGroup
-		wg.Add(doc.NumPage())
 
-		for n := 0; n < doc.NumPage(); n++ {
-			sem <- struct{}{}
-			go func(page int) {
-				defer wg.Done()
-				defer func() { <-sem }()
-				img, _ := doc.Image(page)
-				buf := new(bytes.Buffer)
-				jpeg.Encode(buf, img, nil)
-				str := base64.StdEncoding.EncodeToString(buf.Bytes())
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
 
-				imageDB = append(imageDB, ImageInfo{
-					ID:   page + 1,
-					Data: str,
-				})
-			}(n)
-		}
+			imageDB = make([]ImageInfo, 0)
 
-		wg.Wait()
+			file, _ := c.FormFile("file")
+			f, _ := os.Create(file.Filename)
+			defer f.Close()
+			src, _ := file.Open()
+			defer src.Close()
+			io.Copy(f, src)
 
-		c.JSON(http.StatusOK, imageDB)
+			if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
+				cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
+				err := cmd.Run()
+				if err != nil {
+					fmt.Println("Error converting pptx to pdf:", err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+					return
+				}
+				file.Filename = strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pdf"
 
-		os.Remove(file.Filename)
-		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
-			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
-		}
+				time.Sleep(1 * time.Second)
+			}
+
+			doc, _ := fitz.New(file.Filename)
+			defer doc.Close()
+
+			wg.Add(doc.NumPage())
+
+			for n := 0; n < doc.NumPage(); n++ {
+				sem <- struct{}{}
+				go func(page int) {
+					defer wg.Done()
+					defer func() { <-sem }()
+					img, _ := doc.Image(page)
+					buf := new(bytes.Buffer)
+					jpeg.Encode(buf, img, nil)
+					str := base64.StdEncoding.EncodeToString(buf.Bytes())
+
+					imageDB = append(imageDB, ImageInfo{
+						ID:   page + 1,
+						Data: str,
+					})
+				}(n)
+			}
+
+			wg.Wait()
+
+			c.JSON(http.StatusOK, imageDB)
+
+			os.Remove(file.Filename)
+			if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
+				os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
+			}
+		}()
 	})
 
 	port := os.Getenv("PORT")
