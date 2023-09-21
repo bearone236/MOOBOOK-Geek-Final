@@ -11,7 +11,7 @@ export const Upload = () => {
   const [, setLoading] = useRecoilState(loadingState);
   const [, setIsButtonPressed] = useRecoilState(isButtonPressedState);
 
-  const onFileChange = (event) => {
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
       const allowedFileTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
