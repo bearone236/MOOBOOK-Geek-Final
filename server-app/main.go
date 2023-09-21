@@ -33,7 +33,12 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app"}
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
-	config.AllowHeaders = []string{"Origin", "Content-Type"}
+	config.AllowHeaders = []string{"Access-Control-Allow-Headers",
+		"Content-Type",
+		"Content-Length",
+		"Accept-Encoding",
+		"X-CSRF-Token",
+		"Authorization"}
 	router.Use(cors.New(config))
 
 	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
