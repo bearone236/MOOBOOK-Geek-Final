@@ -37,8 +37,13 @@ export const Upload = () => {
       fetchImages(formData)
         .then((res) => {
           setImages([]);
-          const sortedImages = res.data.sort((a, b) => a.id - b.id);
-          setImages(sortedImages);
+          if (Array.isArray(res.data)) {
+            const sortedImages = res.data.sort((a, b) => a.id - b.id);
+            setImages(sortedImages);
+          } else {
+            console.error('APIレスポンスが配列ではありません。', res);
+            setUploadError('APIレスポンスが正しくありません。');
+          }
           setLoading(false);
         })
         .catch((error) => {
