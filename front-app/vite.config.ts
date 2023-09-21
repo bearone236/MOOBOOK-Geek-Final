@@ -13,6 +13,12 @@ export default ({ mode }) => {
       host: true,
       port: 3000,
       cors: true,
+      proxy: {
+        '/upload': {
+          target: 'https://moobook-server-tulouizjtq-an.a.run.app',
+          changeOrigin: true,
+        },
+      },
     },
     build: {
       rollupOptions: {
