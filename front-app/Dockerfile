@@ -7,6 +7,7 @@ WORKDIR /app
 # 依存関係をコピーし、npmパッケージをインストール
 COPY package.json .
 COPY package-lock.json .
+COPY /src/components/hand_landmarker_2.task .
 RUN npm install
 
 # アプリケーションのソースコードをコピー
