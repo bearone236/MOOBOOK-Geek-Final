@@ -35,7 +35,7 @@ func main() {
 
 	// ローカルでの開発時の設定
 	if os.Getenv("ENV") == "local" {
-		config.AllowOrigins = []string{"http://localhost:8080"}
+		config.AllowOrigins = []string{"http://localhost:3000"}
 	} else {
 		// デプロイ時の設定
 		config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app"}
@@ -48,6 +48,9 @@ func main() {
 	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
 
 	router.OPTIONS("/upload", func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*") // プリフライトリクエストに対する許可
+		c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 		c.Status(http.StatusOK)
 	})
 
@@ -80,7 +83,7 @@ func main() {
 				time.Sleep(1 * time.Second)
 			}
 
-			doc, err := fitz.New(file.Filename) // エラーチェックを追加
+			doc, err := fitz.New(file.Filename)
 			if err != nil {
 				fmt.Println("Error opening the document:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
@@ -95,7 +98,7 @@ func main() {
 				go func(page int) {
 					defer wg.Done()
 					defer func() { <-sem }()
-					img, err := doc.Image(page) // エラーチェックを追加
+					img, err := doc.Image(page)
 					if err != nil {
 						fmt.Println("Error extracting image from page:", err)
 						return
