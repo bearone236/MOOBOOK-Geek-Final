@@ -5,8 +5,9 @@ WORKDIR /app
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
-RUN apt-get install -y unoconv 
-
+RUN apt-get update && \
+    apt-get install -y unoconv && \
+    apt-get clean
 
 
 COPY *.go .
