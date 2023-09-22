@@ -10,7 +10,8 @@ RUN go mod download
 RUN apt-get update && \
     apt-get install -y unoconv libreoffice && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    ln -s /usr/bin/unoconv /usr/local/bin/unoconv
 
 COPY *.go .
 
