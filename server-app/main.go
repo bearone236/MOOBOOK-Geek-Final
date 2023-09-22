@@ -26,7 +26,7 @@ type ImageInfo struct {
 
 var imageDB []ImageInfo
 
-const maxConcurrency = 10 // 同時に実行するゴルーチンの最大数
+const maxConcurrency = 5
 
 func main() {
 	router := gin.Default()
