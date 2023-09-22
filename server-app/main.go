@@ -47,13 +47,6 @@ func main() {
 
 	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
 
-	router.OPTIONS("/upload", func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "*") // プリフライトリクエストに対する許可
-		c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-		c.Status(http.StatusOK)
-	})
-
 	router.POST("/upload", func(c *gin.Context) {
 		sem := make(chan struct{}, 20)
 		var wg sync.WaitGroup

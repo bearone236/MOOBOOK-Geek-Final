@@ -6,8 +6,6 @@ const axiosInstance = axios.create({
   baseURL: apiEndpoint,
 });
 
-axiosInstance.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-
 // 画像データの取得リクエストを行う関数
 export const fetchImages = (formData: FormData) => {
   return axiosInstance.post<ImageInfo[]>('/upload', formData);
