@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "https://moobook-geek-final-server-2-tulouizjtq-an.a.run.app",
+  "proxy": "https://moobook-geek-final-server-tulouizjtq-an.a.run.app",
   "scripts": {
     "start": "vite",
     "dev": "vite",
