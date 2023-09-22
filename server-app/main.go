@@ -30,26 +30,21 @@ var imageDB []ImageInfo // 画像情報を格納するスライス
 func main() {
 	router := gin.Default()
 
-	// CORSが起きないようにエラー処理
+	// CORS設定
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app"}
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
-	config.AllowHeaders = []string{"Access-Control-Allow-Headers",
-		"Content-Type",
-	}
+	config.AllowHeaders = []string{"Accept", "Content-Type"}
 	router.Use(cors.New(config))
 
 	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
 
 	router.OPTIONS("/upload", func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://moobook-geek-final.vercel.app")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type")
-		c.JSON(http.StatusOK, struct{}{})
+		c.Status(http.StatusOK)
 	})
 
 	router.POST("/upload", func(c *gin.Context) {
-		sem := make(chan struct{}, 20) // 同時に処理できるゴルーチンの数を制限します
+		sem := make(chan struct{}, 20)
 		var wg sync.WaitGroup
 
 		go func() {
@@ -114,7 +109,6 @@ func main() {
 
 	fmt.Println("Server started on port", port)
 
-	// リクエストのキューイングとタイムアウトの設定
 	l, _ := net.Listen("tcp", ":"+port)
 	srv := &http.Server{
 		Handler:      router,
