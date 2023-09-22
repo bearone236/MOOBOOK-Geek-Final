@@ -7,7 +7,6 @@ export default ({ mode }) => {
 
   return defineConfig({
     plugins: [react()],
-    envDir: '../',
     server: {
       host: true,
       port: 3000,
@@ -15,7 +14,7 @@ export default ({ mode }) => {
       proxy: {
         '/upload': {
           target: 'https://moobook-geek-final-server-2-tulouizjtq-an.a.run.app',
-          changeOrigin: false,
+          changeOrigin: true,
         },
       },
     },
