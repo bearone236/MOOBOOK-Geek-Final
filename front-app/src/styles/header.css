@@ -3,6 +3,7 @@
 }
 
 .camera {
+  visibility: hidden;
   position: absolute;
   right: 0.4%;
   bottom: 0%;

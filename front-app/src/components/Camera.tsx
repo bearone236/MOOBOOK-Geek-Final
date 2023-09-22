@@ -3,6 +3,7 @@ import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
 import { useRecoilState } from 'recoil';
 import { poseState } from '../recoil/Atom';
+import "../styles/operate.css";
 
 const Camera: React.FC = React.memo(() => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -154,7 +155,7 @@ const Camera: React.FC = React.memo(() => {
 
   return (
     <div>
-      <video ref={videoRef} id="video" height="150" autoPlay playsInline muted style={{ transform: 'scaleX(-1)' }}></video>
+      <video ref={videoRef} id="video" height='70%'  autoPlay playsInline muted style={{ transform: 'scaleX(-1)' }}></video>
     </div>
   );
 });
