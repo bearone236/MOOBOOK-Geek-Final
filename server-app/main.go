@@ -30,12 +30,14 @@ func main() {
 	router := gin.Default()
 
 	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = false // すべてのオリジンを許可しない
 	corsConfig.AllowOrigins = []string{
 		"https://moobook-geek-final.vercel.app",
 		"http://localhost:3000",
 	}
 	corsConfig.AllowMethods = []string{"GET", "POST", "OPTIONS"}
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
+	corsConfig.AllowCredentials = true // クレデンシャルを持つリクエストを許可
 	router.Use(cors.New(corsConfig))
 
 	imageDB = make([]ImageInfo, 0)
