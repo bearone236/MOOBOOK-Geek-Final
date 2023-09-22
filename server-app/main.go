@@ -46,27 +46,55 @@ func main() {
 
 	router.POST("/upload", func(c *gin.Context) {
 		imageDB = make([]ImageInfo, 0)
-		file, _ := c.FormFile("file")
-		f, _ := os.Create(file.Filename)
+		file, err := c.FormFile("file")
+		if err != nil {
+			fmt.Println("Error getting file:", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "file upload failed"})
+			return
+		}
+		tempFilePath := filepath.Join(os.TempDir(), file.Filename)
+		f, err := os.Create(tempFilePath)
+		if err != nil {
+			fmt.Println("Error creating temporary file:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
 		defer f.Close()
-		src, _ := file.Open()
-		defer src.Close()
-		io.Copy(f, src)
 
-		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
-			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
-			err := cmd.Run()
+		src, err := file.Open()
+		if err != nil {
+			fmt.Println("Error opening uploaded file:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
+		defer src.Close()
+
+		if _, err := io.Copy(f, src); err != nil {
+			fmt.Println("Error copying uploaded file to temp:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
+
+		if strings.ToLower(filepath.Ext(tempFilePath)) == ".pptx" {
+			cmd := exec.Command("unoconv", "-f", "pdf", tempFilePath)
+			output, err := cmd.CombinedOutput()
 			if err != nil {
-				fmt.Println("Error converting pptx to pdf:", err)
+				fmt.Printf("unoconv error: %s\nOutput:\n%s\n", err, output)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 				return
 			}
-			file.Filename = strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pdf"
+			tempFilePath = strings.TrimSuffix(tempFilePath, filepath.Ext(tempFilePath)) + ".pdf"
 			time.Sleep(1 * time.Second)
 		}
 
-		doc, _ := fitz.New(file.Filename)
+		doc, err := fitz.New(tempFilePath)
+		if err != nil {
+			fmt.Println("Error loading PDF:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
 		defer doc.Close()
+
 		var wg sync.WaitGroup
 		wg.Add(doc.NumPage())
 
@@ -93,9 +121,9 @@ func main() {
 
 		c.JSON(http.StatusOK, imageDB)
 
-		os.Remove(file.Filename)
-		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
-			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
+		os.Remove(tempFilePath)
+		if strings.ToLower(filepath.Ext(tempFilePath)) == ".pdf" {
+			os.Remove(strings.TrimSuffix(tempFilePath, filepath.Ext(tempFilePath)) + ".pptx")
 		}
 	})
 
