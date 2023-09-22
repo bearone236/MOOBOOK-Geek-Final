@@ -9,19 +9,19 @@
 ----------------*/
 .purpleButton {
   width: 100px;
-  height: 60px;
-  font-size: large;
+  height: 50px;
+  font-size: medium;
   border: none;
   border-radius: 30px;
   color: rgb(255, 255, 255);
-  background-color: #a578df;
+  background-color: #bd75df;
   font-weight: bold;
 }
 
 .purpleButton:hover {
-  color: #a578df;
+  color: #bd75df;
   border: solid;
-  border-color: #a578df;
+  border-color: #bd75df;
   background-color: rgb(255, 255, 255);
   font-weight: bold;
   border-width: 2px;
