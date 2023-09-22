@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { loadEnv } from 'vite';
 
-export default ({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+export default () => {
+  const apiUrl = process.env.VITE_API_URL;
 
   return defineConfig({
     plugins: [react()],
@@ -13,7 +12,7 @@ export default ({ mode }) => {
       cors: true,
       proxy: {
         '/upload': {
-          target: 'https://moobook-geek-final-server-2-tulouizjtq-an.a.run.app',
+          target: apiUrl,
           changeOrigin: true,
         },
       },
