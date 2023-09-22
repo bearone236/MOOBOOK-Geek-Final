@@ -32,7 +32,15 @@ func main() {
 
 	// CORS設定
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app"}
+
+	// ローカルでの開発時の設定
+	if os.Getenv("ENV") == "local" {
+		config.AllowOrigins = []string{"http://localhost:8080"}
+	} else {
+		// デプロイ時の設定
+		config.AllowOrigins = []string{"https://moobook-geek-final.vercel.app"}
+	}
+
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
 	config.AllowHeaders = []string{"Accept", "Content-Type"}
 	router.Use(cors.New(config))

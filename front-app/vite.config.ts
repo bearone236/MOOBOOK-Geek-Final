@@ -15,7 +15,7 @@ export default ({ mode }) => {
       proxy: {
         '/upload': {
           target: 'https://moobook-geek-final-server-2-tulouizjtq-an.a.run.app',
-          changeOrigin: true,
+          changeOrigin: false,
         },
       },
     },
