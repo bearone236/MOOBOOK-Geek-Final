@@ -104,6 +104,7 @@ func main() {
 					jpeg.Encode(buf, img, nil)
 					str := base64.StdEncoding.EncodeToString(buf.Bytes())
 
+					// 以下の行を修正: レスポンスデータを配列に追加
 					imageDB = append(imageDB, ImageInfo{
 						ID:   page + 1,
 						Data: str,
@@ -114,6 +115,7 @@ func main() {
 			wg.Wait()
 
 			c.JSON(http.StatusOK, imageDB)
+			fmt.Println("レスポンスデータ:", imageDB)
 
 			os.Remove(file.Filename)
 			if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
