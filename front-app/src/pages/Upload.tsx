@@ -68,22 +68,39 @@ export const Upload = () => {
           <img src="./PDFIcon.png" alt="PDFIcon" />
           <img src="./PowrPointIcon.png" alt="PowrPointIcon" />
         </div>
-        <label className="onFile">
+        <label className="onFile" id="onFileChange">
+          <div id="uploadIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64.65 68.87">
+              <g>
+                <path
+                  className="cls-1"
+                  d="m62.56,48.99h-5.89c-1.15,0-2.09.93-2.09,2.09v7.74H10.06v-7.74c0-1.15-.93-2.09-2.09-2.09H2.09c-1.15,0-2.09.93-2.09,2.09v12.77c0,2.78,2.25,5.03,5.03,5.03h54.59c2.78,0,5.03-2.25,5.03-5.03v-12.77c0-1.15-.93-2.09-2.09-2.09Z"
+                />
+                <path
+                  className="cls-1"
+                  d="m15.98,21.6h7.59c1.71,0,3.09,1.38,3.09,3.09v22.57c0,.95.91,1.72,2.04,1.72h7.08c1.13,0,2.04-.77,2.04-1.72v-22.57c0-1.71,1.38-3.09,3.09-3.09h7.74c1.69,0,2.65-1.63,1.63-2.76L33.95.68c-.82-.91-2.44-.91-3.26,0L14.36,18.84c-1.02,1.13-.06,2.76,1.63,2.76Z"
+                />
+              </g>
+            </svg>
+          </div>
           <input type="file" onChange={onFileChange} />
-          ファイルを選択してください
+          <p>ファイルを選択してください</p>
         </label>
 
         {!selectedFile && !uploadError && (
-          <p style={{ color: "red" }}>
+          <p className="selectedFile" style={{ color: "red" }}>
             ファイル名：ファイルが選択されていません。
             <br />
             PDFファイルまたはPPTXファイルを選択してください。
           </p>
         )}
-        {selectedFile && <p>ファイル名：{selectedFile.name}</p>}
+        {selectedFile && (
+          <p className="selectedFile">ファイル名：{selectedFile.name}</p>
+        )}
 
         <button
           className="onFile"
+          id="onFileUpload"
           onClick={onFileUpload}
           disabled={selectedFile === null || uploadError !== null}
         >
