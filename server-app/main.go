@@ -24,20 +24,22 @@ type ImageInfo struct {
 	Data string `json:"data"`
 }
 
-var imageDB []ImageInfo // 画像情報を格納するスライス
+var imageDB []ImageInfo
+
+const maxConcurrency = 10 // 同時に実行するゴルーチンの最大数
 
 func main() {
 	router := gin.Default()
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = false // すべてのオリジンを許可しない
+	corsConfig.AllowAllOrigins = false
 	corsConfig.AllowOrigins = []string{
 		"https://moobook-geek-final.vercel.app",
 		"http://localhost:3000",
 	}
 	corsConfig.AllowMethods = []string{"GET", "POST", "OPTIONS"}
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
-	corsConfig.AllowCredentials = true // クレデンシャルを持つリクエストを許可
+	corsConfig.AllowCredentials = true
 	router.Use(cors.New(corsConfig))
 
 	imageDB = make([]ImageInfo, 0)
@@ -51,7 +53,6 @@ func main() {
 		defer src.Close()
 		io.Copy(f, src)
 
-		// Check file extension, if pptx convert to PDF
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
 			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
 			err := cmd.Run()
@@ -68,9 +69,16 @@ func main() {
 		defer doc.Close()
 		var wg sync.WaitGroup
 		wg.Add(doc.NumPage())
+
+		sem := make(chan struct{}, maxConcurrency) // セマフォアの作成
+
 		for n := 0; n < doc.NumPage(); n++ {
 			go func(page int) {
-				defer wg.Done()
+				sem <- struct{}{} // セマフォアを取得
+				defer func() {
+					<-sem // セマフォアを解放
+					wg.Done()
+				}()
 				img, _ := doc.Image(page)
 				buf := new(bytes.Buffer)
 				jpeg.Encode(buf, img, nil)
@@ -82,9 +90,9 @@ func main() {
 			}(n)
 		}
 		wg.Wait()
+
 		c.JSON(http.StatusOK, imageDB)
 
-		// Delete original and converted PDF file (if exists)
 		os.Remove(file.Filename)
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
 			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
