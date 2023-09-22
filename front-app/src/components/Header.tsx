@@ -1,5 +1,5 @@
 import '../styles/header.css';
-// import Camera from './Camera';
+import Camera from './Camera';
 
 export const Header = () => {
   return (
@@ -7,9 +7,9 @@ export const Header = () => {
       <header className="header">
         <img src="./MOOBOOK.png" alt="icon" className="headerImage" />
 
-        {/* <div className="camera">
+        <div className="camera">
           <Camera />
-        </div> */}
+        </div>
       </header>
     </div>
   );
