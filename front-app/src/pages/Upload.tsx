@@ -36,14 +36,9 @@ export const Upload = () => {
       // api.tsからAPI関数(fetchImages)を呼び出して画像データを取得
       fetchImages(formData)
         .then((res) => {
-          if (Array.isArray(res.data) && res.data.length > 0) {
-            setImages([]);
-            const sortedImages = res.data.sort((a, b) => a.id - b.id);
-            setImages(sortedImages);
-          } else {
-            console.error('APIレスポンスが空または不正です。', res);
-            setUploadError('APIレスポンスが正しくありません。');
-          }
+          setImages([]);
+          const sortedImages = res.data.sort((a, b) => a.id - b.id);
+          setImages(sortedImages);
           setLoading(false);
         })
         .catch((error) => {
