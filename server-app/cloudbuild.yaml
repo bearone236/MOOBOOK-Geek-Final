@@ -1,9 +1,8 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/moobook-geek-final-server-2', './server-app']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/moobook-geek-final-server', './server-app']
 images:
-  - 'gcr.io/$PROJECT_ID/moobook-geek-final-server-2'
+  - 'gcr.io/$PROJECT_ID/moobook-geek-final-server'
 options:
-  # logging: CLOUD_LOGGING_ONLY
-  # serviceAccount: 1072813062141@cloudbuild.gserviceaccount.com
+
 logsBucket: 'artifacts.moobook-2023.appspot.com'
