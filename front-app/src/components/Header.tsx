@@ -1,6 +1,6 @@
 import '../styles/header.css';
 import Camera from './Camera';
-import { Operate } from './Operate';
+import { Operate } from '../components/Operate';
 
 export const Header = () => {
   return (
