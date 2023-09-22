@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from 'react';
 
-import "../styles/operate.css";
-import Camera from "./Camera";
+import '../styles/operate.css';
+import Camera from './Camera';
 
 export const Gesture = () => {
   return (
@@ -32,13 +32,12 @@ export const Modal = ({ content, closeModal }) => {
       <div id="content" onClick={(e) => e.stopPropagation()}>
         <h2>{content}</h2>
         <section id="A">
-        <Gesture />
-        <Camera />
+          <Gesture />
+          <Camera />
         </section>
         <button id="closeButton" className="purpleButton" onClick={closeModal}>
           close
         </button>
-        
       </div>
     </div>
   );
