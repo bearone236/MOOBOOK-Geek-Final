@@ -44,7 +44,7 @@ func main() {
 	router.OPTIONS("/upload", func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://moobook-geek-final.vercel.app")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type")
 		c.JSON(http.StatusOK, struct{}{})
 	})
 
