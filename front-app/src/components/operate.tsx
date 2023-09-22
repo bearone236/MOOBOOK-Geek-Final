@@ -1,18 +1,17 @@
 import { useState } from "react";
-
 import "../styles/operate.css";
 import Camera from "./Camera";
 
-export const Gesture = () => {
+const Gesture = () => {
   return (
     <div id="gesture">
       <div>
         <p>ページ進める</p>
-        <img id="ges-1" src="./asset0001.png" alt="" />
+        <img id="ges-1" src="./asset0005.png" alt="" />
       </div>
       <div>
         <p>ページ戻り</p>
-        <img id="ges-2" src="./asset0002.png" alt="" />
+        <img id="ges-2" src="./asset0006.png" alt="" />
       </div>
       {/* <div>
         <p>決定</p>
@@ -26,16 +25,18 @@ export const Gesture = () => {
   );
 };
 
-export const Modal = ({ content, closeModal }) => {
+const Modal = ({ content, closeModal }) => {
   return (
     <div id="overlay" onClick={closeModal}>
       <div id="content" onClick={(e) => e.stopPropagation()}>
         <h2>{content}</h2>
-        <Gesture />
+        <section id="A">
+          <Gesture />
+          <Camera />
+        </section>
         <button id="closeButton" className="purpleButton" onClick={closeModal}>
           close
         </button>
-        <Camera />
       </div>
     </div>
   );

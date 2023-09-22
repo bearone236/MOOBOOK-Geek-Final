@@ -24,21 +24,28 @@ type ImageInfo struct {
 	Data string `json:"data"`
 }
 
-var imageDB []ImageInfo // 画像情報を格納するスライス
+var imageDB []ImageInfo
+
+const maxConcurrency = 10 // 同時に実行するゴルーチンの最大数
 
 func main() {
 	router := gin.Default()
 
-	// CORSが起きないようにエラー処理
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
-	router.Use(cors.New(config))
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = false
+	corsConfig.AllowOrigins = []string{
+		"https://moobook-geek-final.vercel.app",
+		"http://localhost:3000",
+	}
+	corsConfig.AllowMethods = []string{"GET", "POST", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
+	corsConfig.AllowCredentials = true
+	router.Use(cors.New(corsConfig))
 
-	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
+	imageDB = make([]ImageInfo, 0)
 
 	router.POST("/upload", func(c *gin.Context) {
 		imageDB = make([]ImageInfo, 0)
-
 		file, _ := c.FormFile("file")
 		f, _ := os.Create(file.Filename)
 		defer f.Close()
@@ -46,7 +53,6 @@ func main() {
 		defer src.Close()
 		io.Copy(f, src)
 
-		// ファイル拡張子をチェック、pptxの場合はPDFに変換
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
 			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
 			err := cmd.Run()
@@ -56,37 +62,37 @@ func main() {
 				return
 			}
 			file.Filename = strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pdf"
-
 			time.Sleep(1 * time.Second)
 		}
 
 		doc, _ := fitz.New(file.Filename)
 		defer doc.Close()
-
 		var wg sync.WaitGroup
 		wg.Add(doc.NumPage())
 
+		sem := make(chan struct{}, maxConcurrency) // セマフォアの作成
+
 		for n := 0; n < doc.NumPage(); n++ {
 			go func(page int) {
-				defer wg.Done()
+				sem <- struct{}{} // セマフォアを取得
+				defer func() {
+					<-sem // セマフォアを解放
+					wg.Done()
+				}()
 				img, _ := doc.Image(page)
 				buf := new(bytes.Buffer)
 				jpeg.Encode(buf, img, nil)
 				str := base64.StdEncoding.EncodeToString(buf.Bytes())
-
 				imageDB = append(imageDB, ImageInfo{
-					ID:   page + 1, // ページ番号をIDとして使用
+					ID:   page + 1,
 					Data: str,
 				})
 			}(n)
 		}
-
 		wg.Wait()
 
-		// クライアントに画像情報を返す
 		c.JSON(http.StatusOK, imageDB)
 
-		// 元のファイルと変換後のPDFファイル（存在する場合）を削除
 		os.Remove(file.Filename)
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
 			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")

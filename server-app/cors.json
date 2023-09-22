@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://moobook-geek-final.vercel.app"],
+    "responseHeader": ["Content-Type"],
+    "method": ["GET", "HEAD", "DELETE", "POST", "OPTIONS"],
+    "maxAgeSeconds": 3600
+  }
+]

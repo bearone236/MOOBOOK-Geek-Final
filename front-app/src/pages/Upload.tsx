@@ -48,7 +48,11 @@ export const Upload = () => {
       // api.tsからAPI関数(fetchImages)を呼び出して画像データを取得
       fetchImages(formData)
         .then((res) => {
+          // 以下の行を追加: レスポンスデータをログ出力
+          console.log("APIからのレスポンスデータ:", res.data);
+
           setImages([]);
+          // 以下の行を修正: レスポンスデータを直接セットしないで、dataプロパティから取得
           const sortedImages = res.data.sort((a, b) => a.id - b.id);
           setImages(sortedImages);
           setLoading(false);
@@ -65,8 +69,8 @@ export const Upload = () => {
     <div className="upload">
       <section>
         <div className="Icons">
-          <img src="./PDFIcon.png" alt="PDFIcon" />
-          <img src="./PowrPointIcon.png" alt="PowrPointIcon" />
+          <img src="/PDFIcon.png" alt="PDFIcon" />
+          <img src="/PowrPointIcon.png" alt="PowrPointIcon" />
         </div>
         <label className="onFile" id="onFileChange">
           <div id="uploadIcon">
