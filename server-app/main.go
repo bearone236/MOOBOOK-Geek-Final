@@ -76,7 +76,7 @@ func main() {
 		}
 
 		if strings.ToLower(filepath.Ext(tempFilePath)) == ".pptx" {
-			cmd := exec.Command("/usr/local/bin/unoconv", "-f", "pdf", tempFilePath) // この行を修正
+			cmd := exec.Command("unoconv", "-f", "pdf", tempFilePath)
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				fmt.Printf("unoconv error: %s\nOutput:\n%s\n", err, output)
