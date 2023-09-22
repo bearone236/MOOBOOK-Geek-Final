@@ -24,73 +24,106 @@ type ImageInfo struct {
 	Data string `json:"data"`
 }
 
-var imageDB []ImageInfo // 画像情報を格納するスライス
+var imageDB []ImageInfo
+
+const maxConcurrency = 5
 
 func main() {
 	router := gin.Default()
 
-	// CORSが起きないようにエラー回避処理
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
-	router.Use(cors.New(config))
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = false
+	corsConfig.AllowOrigins = []string{
+		"https://moobook-geek-final.vercel.app",
+		"http://localhost:3000",
+	}
+	corsConfig.AllowMethods = []string{"GET", "POST", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
+	corsConfig.AllowCredentials = true
+	router.Use(cors.New(corsConfig))
 
-	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
+	imageDB = make([]ImageInfo, 0)
 
 	router.POST("/upload", func(c *gin.Context) {
 		imageDB = make([]ImageInfo, 0)
-
-		file, _ := c.FormFile("file")
-		f, _ := os.Create(file.Filename)
+		file, err := c.FormFile("file")
+		if err != nil {
+			fmt.Println("Error getting file:", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "file upload failed"})
+			return
+		}
+		tempFilePath := filepath.Join(os.TempDir(), file.Filename)
+		f, err := os.Create(tempFilePath)
+		if err != nil {
+			fmt.Println("Error creating temporary file:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
 		defer f.Close()
-		src, _ := file.Open()
-		defer src.Close()
-		io.Copy(f, src)
 
-		// ファイル拡張子をチェック、pptxの場合はPDFに変換
-		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
-			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
-			err := cmd.Run()
+		src, err := file.Open()
+		if err != nil {
+			fmt.Println("Error opening uploaded file:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
+		defer src.Close()
+
+		if _, err := io.Copy(f, src); err != nil {
+			fmt.Println("Error copying uploaded file to temp:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
+
+		if strings.ToLower(filepath.Ext(tempFilePath)) == ".pptx" {
+			cmd := exec.Command("unoconv", "-f", "pdf", tempFilePath)
+			output, err := cmd.CombinedOutput()
 			if err != nil {
-				fmt.Println("Error converting pptx to pdf:", err)
+				fmt.Printf("unoconv error: %s\nOutput:\n%s\n", err, output)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 				return
 			}
-			file.Filename = strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pdf"
-
-			time.Sleep(2 * time.Second)
+			tempFilePath = strings.TrimSuffix(tempFilePath, filepath.Ext(tempFilePath)) + ".pdf"
+			time.Sleep(1 * time.Second)
 		}
 
-		doc, _ := fitz.New(file.Filename)
+		doc, err := fitz.New(tempFilePath)
+		if err != nil {
+			fmt.Println("Error loading PDF:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+			return
+		}
 		defer doc.Close()
 
 		var wg sync.WaitGroup
 		wg.Add(doc.NumPage())
 
+		sem := make(chan struct{}, maxConcurrency) // セマフォアの作成
+
 		for n := 0; n < doc.NumPage(); n++ {
 			go func(page int) {
-				defer wg.Done()
+				sem <- struct{}{} // セマフォアを取得
+				defer func() {
+					<-sem // セマフォアを解放
+					wg.Done()
+				}()
 				img, _ := doc.Image(page)
 				buf := new(bytes.Buffer)
 				jpeg.Encode(buf, img, nil)
 				str := base64.StdEncoding.EncodeToString(buf.Bytes())
-
-				// 画像情報を追加
 				imageDB = append(imageDB, ImageInfo{
-					ID:   page + 1, // ページ番号をIDとして使用
+					ID:   page + 1,
 					Data: str,
 				})
 			}(n)
 		}
-
 		wg.Wait()
 
-		// クライアントに画像情報を返す
 		c.JSON(http.StatusOK, imageDB)
 
-		// 元のファイルと変換後のPDFファイル（存在する場合）を削除
-		os.Remove(file.Filename)
-		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
-			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
+		os.Remove(tempFilePath)
+		if strings.ToLower(filepath.Ext(tempFilePath)) == ".pdf" {
+			os.Remove(strings.TrimSuffix(tempFilePath, filepath.Ext(tempFilePath)) + ".pptx")
 		}
 	})
 

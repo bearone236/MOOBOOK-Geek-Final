@@ -4,6 +4,7 @@ import * as handpose from '@tensorflow-models/handpose';
 import { useRecoilState } from 'recoil';
 import { poseState } from '../recoil/Atom';
 import {HandLandmarker, FilesetResolver} from '@mediapipe/tasks-vision';
+import '../styles/camera.css';
 
 const Camera: React.FC = React.memo(() => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -211,8 +212,7 @@ const Camera: React.FC = React.memo(() => {
 
   return (
     <div>
-      <video ref={videoRef} id="video" height="150" autoPlay playsInline muted style={{ transform: 'scaleX(-1)' }}></video>
-      {/* <video ref={videoRef} id="video" width="300" height="150" autoPlay playsInline muted style={{ transform: 'scaleX(-1)' }}></video> */}
+         <video ref={videoRef} id="video" height="60%" autoPlay playsInline muted style={{ transform: 'scaleX(-1)' }}></video>;
     </div>
   );
 });
