@@ -6,7 +6,7 @@
 /* ----------------
 こうすけ変更点
 ------------------ */
-input[type='file'] {
+input[type="file"] {
   display: none;
 }
 
@@ -14,11 +14,20 @@ input[type='file'] {
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-content: center;
   width: 80vw;
+  height: 70vh;
   height: 70vh;
   margin: 40px auto 0 auto;
   border-radius: 30px;
   background-color: #f3f3f3;
+}
+
+.upload section {
+  border: dashed 2px black;
+  border-radius: 30px;
+  width: 70vw;
+  height: 60vh;
 }
 
 .icons {
@@ -34,9 +43,11 @@ img {
 }
 
 .onFile {
-  display: block;
-  width: 300px;
+  display: flex;
+  justify-content: center;
+  width: 400px;
   padding: 20px 40px;
+  margin: 0 auto;
   margin: 0 auto;
   color: #ffffff;
   cursor: pointer;
@@ -44,8 +55,38 @@ img {
   clear: both;
 }
 
+#onFileChange {
+  border: solid 2px #2e90ff;
+}
+
+#onFileChange:hover {
+  color: #2e90ff;
+  background-color: #ffffff;
+}
+
+/* ----------------
+アップロードのアイコン　SVGファイル
+------------------ */
+#uploadIcon {
+  fill: #ffffff;
+  width: 26px;
+  margin-right: 10px;
+}
+
+.onFile:hover > #uploadIcon {
+  fill: #2e90ff;
+}
+
+.onFile p {
+  margin: auto 0;
+}
+
 label {
   background-color: #2e90ff;
+}
+
+.selectedFile {
+  margin: 20px;
 }
 
 /* ----------
@@ -54,7 +95,7 @@ label {
 button {
   border: none;
   border-radius: 10px;
-  background-color: #b46aff;
+  background-color: #bd75df;
 }
 
 /* ----------

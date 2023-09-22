@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import '../styles/operate.css';
-import Camera from './Camera';
+import { useState } from "react";
+import "../styles/operate.css";
+import Camera from "./Camera";
 
 const Gesture = () => {
   return (
