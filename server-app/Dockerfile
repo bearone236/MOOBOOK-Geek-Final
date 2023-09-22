@@ -12,9 +12,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* 
 
-# Unoconvの場所を確認するための一時的なコマンド
-RUN which unoconv
-
 COPY *.go .
 
 RUN go build -o /main
