@@ -5,10 +5,12 @@ WORKDIR /app
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
+
+# Unoconvをインストール
 RUN apt-get update && \
     apt-get install -y unoconv && \
-    apt-get clean
-
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY *.go .
 

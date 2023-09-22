@@ -72,7 +72,12 @@ func main() {
 				time.Sleep(1 * time.Second)
 			}
 
-			doc, _ := fitz.New(file.Filename)
+			doc, err := fitz.New(file.Filename) // エラーチェックを追加
+			if err != nil {
+				fmt.Println("Error opening the document:", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+				return
+			}
 			defer doc.Close()
 
 			wg.Add(doc.NumPage())
@@ -82,7 +87,11 @@ func main() {
 				go func(page int) {
 					defer wg.Done()
 					defer func() { <-sem }()
-					img, _ := doc.Image(page)
+					img, err := doc.Image(page) // エラーチェックを追加
+					if err != nil {
+						fmt.Println("Error extracting image from page:", err)
+						return
+					}
 					buf := new(bytes.Buffer)
 					jpeg.Encode(buf, img, nil)
 					str := base64.StdEncoding.EncodeToString(buf.Bytes())
