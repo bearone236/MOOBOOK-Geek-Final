@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/gen2brain/go-fitz"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,14 +28,19 @@ var imageDB []ImageInfo // 画像情報を格納するスライス
 func main() {
 	router := gin.Default()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{
-		"http://localhost:3000",
-		"https://moobook-geek-final.vercel.app",
-	}
-	router.Use(cors.New(config))
+	// Manually set CORS headers
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://moobook-geek-final.vercel.app")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
 
-	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
+	imageDB = make([]ImageInfo, 0)
 
 	router.POST("/upload", func(c *gin.Context) {
 		imageDB = make([]ImageInfo, 0)
@@ -47,11 +51,10 @@ func main() {
 		defer src.Close()
 		io.Copy(f, src)
 
-		// ファイル拡張子をチェック、pptxの場合はPDFに変換
+		// Check file extension, if pptx convert to PDF
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pptx" {
 			cmd := exec.Command("unoconv", "-f", "pdf", file.Filename)
 			err := cmd.Run()
-
 			if err != nil {
 				fmt.Println("Error converting pptx to pdf:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
@@ -66,27 +69,22 @@ func main() {
 		var wg sync.WaitGroup
 		wg.Add(doc.NumPage())
 		for n := 0; n < doc.NumPage(); n++ {
-
 			go func(page int) {
-
 				defer wg.Done()
 				img, _ := doc.Image(page)
 				buf := new(bytes.Buffer)
 				jpeg.Encode(buf, img, nil)
 				str := base64.StdEncoding.EncodeToString(buf.Bytes())
 				imageDB = append(imageDB, ImageInfo{
-					ID:   page + 1, // ページ番号をIDとして使用
+					ID:   page + 1,
 					Data: str,
 				})
 			}(n)
 		}
-
 		wg.Wait()
-
-		// クライアントに画像情報を返す
 		c.JSON(http.StatusOK, imageDB)
 
-		// 元のファイルと変換後のPDFファイル（存在する場合）を削除
+		// Delete original and converted PDF file (if exists)
 		os.Remove(file.Filename)
 		if strings.ToLower(filepath.Ext(file.Filename)) == ".pdf" {
 			os.Remove(strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename)) + ".pptx")
