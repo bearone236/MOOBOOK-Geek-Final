@@ -21,6 +21,13 @@ input[type="file"] {
   background-color: #f3f3f3;
 }
 
+.upload section {
+  border: dashed 2px black;
+  border-radius: 30px;
+  width: 70vw;
+  height: 60vh;
+}
+
 .icons {
   display: flex;
   justify-content: center;
