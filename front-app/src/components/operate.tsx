@@ -1,9 +1,8 @@
 import { useState } from 'react';
-
 import '../styles/operate.css';
 import Camera from './Camera';
 
-export const Gesture = () => {
+const Gesture = () => {
   return (
     <div id="gesture">
       <div>
@@ -26,7 +25,7 @@ export const Gesture = () => {
   );
 };
 
-export const Modal = ({ content, closeModal }) => {
+const Modal = ({ content, closeModal }) => {
   return (
     <div id="overlay" onClick={closeModal}>
       <div id="content" onClick={(e) => e.stopPropagation()}>
