@@ -6,12 +6,14 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
-# UnoconvとLibreOfficeをインストール
+# LibreOfficeとUnoconvをインストール
 RUN apt-get update && \
-    apt-get install -y unoconv libreoffice && \
+    apt-get install -y unoconv libreoffice-core && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    ln -s /usr/bin/unoconv /usr/local/bin/unoconv
+    rm -rf /var/lib/apt/lists/* 
+
+# Unoconvの場所を確認するための一時的なコマンド
+RUN which unoconv
 
 COPY *.go .
 
