@@ -33,6 +33,7 @@ export const Upload = () => {
       } else {
         setUploadError(null);
         setSelectedFile(file);
+
       }
     }
   };
@@ -43,7 +44,7 @@ export const Upload = () => {
       setLoading(true);
       const formData = new FormData();
       formData.append("file", selectedFile);
-
+  
       // api.tsからAPI関数(fetchImages)を呼び出して画像データを取得
       fetchImages(formData)
         .then((res) => {
@@ -51,6 +52,7 @@ export const Upload = () => {
           const sortedImages = res.data.sort((a, b) => a.id - b.id);
           setImages(sortedImages);
           setLoading(false);
+          console.log(selectedFile.name);
         })
         .catch((error) => {
           console.error("APIエラー:", error);
@@ -60,13 +62,16 @@ export const Upload = () => {
     }
   };
 
+
   return (
     <div className="upload">
       <input type="file" onChange={onFileChange} />
+      
       <button
         onClick={onFileUpload}
         disabled={selectedFile === null || uploadError !== null}
       >
+      
         アップロード
       </button>
 
@@ -76,6 +81,9 @@ export const Upload = () => {
         </p>
       )}
       {uploadError && <p style={{ color: "red" }}>{uploadError}</p>}
+      {selectedFile && (
+        <p id= "filename">ファイル名：{selectedFile.name}</p>
+      )}
     </div>
   );
 };

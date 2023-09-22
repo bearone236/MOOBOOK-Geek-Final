@@ -52,7 +52,8 @@
 
 #content {
   z-index: 1000;
-  width: 70vw;
+  width: 50%;
+  height: auto;
   padding: 1em;
   background: #fff;
   border-radius: 10px;
@@ -61,6 +62,7 @@
 #content h2 {
   text-align: center;
   font-size: 30px;
+  margin-bottom: 30px;
 }
 
 /*--------------------
@@ -75,7 +77,7 @@
 #gesture div {
   border: solid 2px;
   border-radius: 20px;
-  width: 50%;
+  /* width: 70%; */
   height: auto;
   margin: 2%;
   padding: 2%;
@@ -99,13 +101,13 @@
 -------------------- */
 #ges-1 {
   object-fit: cover;
-  width: 100%;
+  width: 80%;
   height: auto;
 }
 
 #ges-2 {
   object-fit: cover;
-  width: 100%;
+  width: 80%;
   height: auto;
 }
 

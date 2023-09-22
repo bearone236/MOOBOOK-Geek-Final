@@ -32,6 +32,7 @@ export const Modal = ({ content, closeModal }) => {
       <div id="content" onClick={(e) => e.stopPropagation()}>
         <h2>{content}</h2>
         <section id="A">
+        
         <Gesture />
         <Camera />
         </section>
