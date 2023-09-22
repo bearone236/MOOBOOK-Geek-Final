@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { ImageInfo } from '../pages/Slider';
 
-// サーバーから画像データを取得する関数api
+const apiEndpoint = import.meta.env.VITE_API_URL;
+const axiosInstance = axios.create({
+  baseURL: apiEndpoint,
+});
+
+// 画像データの取得リクエストを行う関数
 export const fetchImages = (formData: FormData) => {
-  return axios.post<ImageInfo[]>('http://localhost:8080/upload', formData);
+  return axiosInstance.post<ImageInfo[]>('/upload', formData);
 };

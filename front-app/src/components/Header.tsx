@@ -6,8 +6,12 @@ export const Header = () => {
   return (
     <div>
       <header className="header">
-        <img src="./MOOBOOK.png" alt="icon" className="headerImage" />
-        <Operate />
+        <section>
+          <img src="./MOOBOOK.png" alt="icon" className="headerImage" />
+          <div className="operate">
+            <Operate />
+          </div>
+        </section>
         <div className="camera">
           <Camera />
         </div>
