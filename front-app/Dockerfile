@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY package.json .
 COPY package-lock.json .
-RUN npm ci
-
+COPY /src/components/hand_landmarker_2.task .
+RUN npm install
 
 COPY . .
 EXPOSE 3000
