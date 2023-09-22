@@ -10,7 +10,7 @@ export default ({ mode }) => {
     envDir: '../',
     server: {
       host: true,
-      port: 3000,
+      port: 8080,
       cors: true,
       proxy: {
         '/upload': {
