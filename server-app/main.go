@@ -42,7 +42,7 @@ func main() {
 	}
 
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
-	config.AllowHeaders = []string{"Accept", "Content-Type"}
+	config.AllowHeaders = []string{"Accept", "Content-Type", "Access-Control-Allow-Headers"}
 	router.Use(cors.New(config))
 
 	imageDB = make([]ImageInfo, 0) // jsonデータがPOSTで重複されないように毎度スライスを初期化
