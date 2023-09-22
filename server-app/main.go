@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/gen2brain/go-fitz"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,17 +29,14 @@ var imageDB []ImageInfo // 画像情報を格納するスライス
 func main() {
 	router := gin.Default()
 
-	// Manually set CORS headers
-	router.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://moobook-geek-final.vercel.app")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-		c.Next()
-	})
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{
+		"https://moobook-geek-final.vercel.app",
+		"http://localhost:3000",
+	}
+	corsConfig.AllowMethods = []string{"GET", "POST", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
+	router.Use(cors.New(corsConfig))
 
 	imageDB = make([]ImageInfo, 0)
 
