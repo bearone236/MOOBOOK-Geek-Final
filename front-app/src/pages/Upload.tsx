@@ -54,8 +54,8 @@ export const Upload = () => {
     <div className="upload">
       <section>
         <div className="Icons">
-          <img src="./PDFIcon.png" alt="PDFIcon" />
-          <img src="./PowrPointIcon.png" alt="PowrPointIcon" />
+          <img src="/PDFIcon.png" alt="PDFIcon" />
+          <img src="/PowrPointIcon.png" alt="PowrPointIcon" />
         </div>
         <label className="onFile">
           <input type="file" onChange={onFileChange} />
