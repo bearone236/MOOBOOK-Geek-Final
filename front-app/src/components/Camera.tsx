@@ -64,18 +64,21 @@ const Camera: React.FC = React.memo(() => {
           // const predictions = await model.detectforvideo(video, true);
           const predictions = await model.detectForVideo(video, performance.now());
           // processResults(predictions);
-          // console.log('Predictions:', predictions);
+          console.log('Predictions:', predictions);
 
           if (predictions.landmarks && predictions.landmarks.length > 0) {
             predictions.landmarks.forEach((landmark) => {
               // ここでランドマークを処理します
               console.log(landmark);
               const landmarks = predictions.landmarks;
+              const handednesses = predictions.handednesses;
               const tip0 = landmarks[0][5];
               const tip1 = landmarks[0][6];
               const tip2 = landmarks[0][7];
               const wrist = landmarks[0][0];
-              // console.log('tip0:', tip0['x'])
+              const hand = handednesses[0][0]['categoryName'];
+              console.log('tip0:', tip0['x']);
+              // console.log(hand);
 
               const angle =
                 (((tip0['x'] - tip1['x']) * (tip2['x'] - tip1['x']) + (tip0['y'] - tip1['y']) * (tip2['y'] - tip1['y']) + (tip0['z'] - tip1['z']) * (tip2['z'] - tip1['z'])) /
@@ -85,6 +88,7 @@ const Camera: React.FC = React.memo(() => {
               const radian = Math.acos(angle);
               const degree = radian * (180 / Math.PI);
               // console.log("degree: ",degree);
+              // if (degree > 60 && hand == 'Right') {
               if (degree > 60) {
                 if (prevX == null) {
                   prevX = 0;
@@ -97,11 +101,11 @@ const Camera: React.FC = React.memo(() => {
                 const y_dist = wrist['y'] - prevY;
                 prevX = null;
                 prevY = null;
-                console.log('手が握られました', x_dist, 'tip0:', wrist['x']);
+                // console.log('手が握られました', x_dist, 'tip0:', wrist['x']);
                 setPose(''); // リセット
 
                 if (x_dist > threshold) {
-                  console.log('手が左に移動しました', x_dist, 'tip0:', wrist['x']);
+                  // console.log('手が左に移動しました', x_dist, 'tip0:', wrist['x']);
                   prevX = null;
                   prevY = null;
                   setPose(''); // リセット
@@ -109,7 +113,7 @@ const Camera: React.FC = React.memo(() => {
 
                   // setTimeout(timeout);
                 } else if (x_dist < -1 * threshold) {
-                  console.log('手が右に移動しました', x_dist, 'tip0:', wrist['x']);
+                  // console.log('手が右に移動しました', x_dist, 'tip0:', wrist['x']);
                   prevX = null;
                   setPose(''); // リセット
                   setPose('toleft');
@@ -120,14 +124,14 @@ const Camera: React.FC = React.memo(() => {
                   setPose(''); // リセット
                   setPose('back');
                 } else {
-                  console.log('x_dist:', x_dist);
+                  // console.log('x_dist:', x_dist);
                   prevX = null;
                   prevY = null;
                   setPose(''); // リセット
                 }
                 prevX = wrist['x'];
                 prevY = wrist['y'];
-                console.log('到達:', 'prevX:', prevX, 'prevY:', prevY);
+                // console.log('到達:', 'prevX:', prevX, 'prevY:', prevY);
               }
 
               //-------------------------------------------------------------
@@ -169,7 +173,7 @@ const Camera: React.FC = React.memo(() => {
 
                 prevX = wrist['x'];
                 prevY = wrist['y'];
-                console.log('到達:', 'prevX:', prevX, 'prevY:', prevY);
+                // console.log('到達:', 'prevX:', prevX, 'prevY:', prevY);
               }
             });
           } else {
@@ -183,11 +187,7 @@ const Camera: React.FC = React.memo(() => {
   }, []);
   // }, [setPoseCallback, isDetecting]);
 
-  return (
-    <div>
-      <video ref={videoRef} id="video" height="60%" autoPlay playsInline muted style={{ transform: 'scaleX(-1)' }}></video>;
-    </div>
-  );
+  return <video ref={videoRef} id="video" height="60%" autoPlay playsInline muted style={{ transform: 'scaleX(-1)' }}></video>;
 });
 
 export default Camera;

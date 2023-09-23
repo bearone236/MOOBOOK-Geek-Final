@@ -6,8 +6,13 @@
 /* ----------------
 こうすけ変更点
 ------------------ */
-input[type="file"] {
+input[type='file'] {
   display: none;
+}
+
+.Icons {
+  padding-top: 100px;
+  padding-bottom: 20px;
 }
 
 .upload {
